@@ -9,7 +9,7 @@ const SingleEvent = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const dispatch = useDispatch<AppDispatch>();
-    const {CurrentEvent, loading, error} = useSelector(
+    const { CurrentEvent, loading, error } = useSelector(
         (state: RootState) => state.EventSlice
     );
 
@@ -17,9 +17,14 @@ const SingleEvent = () => {
         getEventById(dispatch, id)
     }, [])
 
-    if(loading) return <CustomLoader/>
-    if(error) return alert("error")
-        
+    if (loading) return <CustomLoader />
+    if (error)
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <p className="text-red-600 font-semibold">Error: {error}</p>
+            </div>
+        );
+
     return (
         <>
             <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 md:p-10">
