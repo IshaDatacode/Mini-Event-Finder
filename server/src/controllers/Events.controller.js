@@ -37,23 +37,41 @@ const createEvent = async (req, res) => {
 }
 
 const getAllEvents = async (req, res) => {
-    try {
-        const AllEvents = await Event.find({});
-        res.status(200).json({
-            success: true,
-            message: "All Events fetched successfully",
-            Events: AllEvents
-        })
+  try {
+    const { search, date, maxParticipants } = req.query;
 
+    const query = {};
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
     }
-    catch (err) {
-        console.error("Error fetching events:", err);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        });
+
+    if (date) {
+      query.date = { $gte: new Date(date) };
     }
-}
+
+    if (maxParticipants) {
+      query.maxParticipants = { $lte: Number(maxParticipants) };
+    }
+
+    const events = await Event.find(query);
+
+    res.status(200).json({
+      success: true,
+      message: "Events fetched successfully",
+      Events: events,
+    });
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
 const getEventById = async (req, res) => {
     try {

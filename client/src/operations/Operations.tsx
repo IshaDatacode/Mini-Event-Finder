@@ -2,10 +2,11 @@ import AxiosInstance from "./AxiosInstance"
 import { setCurrentEvent, setError, setEvents, setLoading } from "./redux/EventSlice"
 
 
-export const getAllEvents = async (dispatch: any) => {
+export const getAllEvents = async (dispatch: any, filters = {}) => {
     try {
         dispatch(setLoading(true))
-        const response = await AxiosInstance.get("/api/events")
+        const queryParams = new URLSearchParams(filters).toString();
+        const response = await AxiosInstance.get(`/api/events?${queryParams}`)
         console.log(response)
         dispatch(setEvents(response.data.Events))
         return response?.data
